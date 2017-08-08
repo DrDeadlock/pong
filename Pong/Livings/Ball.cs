@@ -12,6 +12,7 @@ namespace Pong.Livings
     {
         public Vector2 Position;
         public Vector2 Direction;
+        public Vector2 PositionCentered;
 
         public float Width;
         public float Height;
@@ -23,8 +24,15 @@ namespace Pong.Livings
             Direction = initDirection;
             Width = initWidth;
             Height = initHeight;
+
+            PositionCentered = new Vector2(Position.X + Width / 2, Position.Y + Height / 2);
             
             Velocity = Math.Sqrt((double)(Direction.X * Direction.X + Direction.Y * Direction.Y))*2;
+        }
+
+        public void UpdateBallEssentials()
+        {
+            PositionCentered = new Vector2(Position.X + Width / 2, Position.Y + Height / 2);
         }
     }
 }

@@ -44,6 +44,8 @@ namespace Pong.Components
             Ball.Position.X += Ball.Direction.X;
             Ball.Position.Y += Ball.Direction.Y;
 
+            Ball.UpdateBallEssentials();
+
             PlayerOneRect = new Rectangle(
                 (int)(PlayerOne.Position.X*100),(int)(PlayerOne.Position.Y*100),
                 (int)(PlayerOne.Width*100),(int)(PlayerOne.Height*100));
@@ -57,8 +59,8 @@ namespace Pong.Components
             //HandleAutoMovement();
 
             CollisionHelper.HandleBallWallCollision(Ball, PlayerOne, PlayerTwo);
-            CollisionHelper.HandleBallPlayerCollision(Ball,PlayerOne, BallRect,PlayerOneRect);
-            CollisionHelper.HandleBallPlayerCollision(Ball,PlayerTwo, BallRect,PlayerTwoRect);
+            CollisionHelper.CheckBallPlayerCollision(Ball,PlayerOne, BallRect,PlayerOneRect);
+            CollisionHelper.CheckBallPlayerCollision(Ball,PlayerTwo, BallRect,PlayerTwoRect);
             CollisionHelper.HandlePlayerWallCollision(PlayerOne,PlayerTwo);
 
             base.Update(gameTime);

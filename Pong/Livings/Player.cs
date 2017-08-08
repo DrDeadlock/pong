@@ -12,6 +12,7 @@ namespace Pong.Livings
     {
         public enum MoveDirection { Up, Down};
         public Vector2 Position;
+        public Vector2 PositionCentered;
 
         public float Width;
         public float Height;
@@ -25,6 +26,8 @@ namespace Pong.Livings
             Velocity = initVelocity;
             Width = initWidth;
             Height = initHeight;
+
+            PositionCentered = new Vector2(Position.X + Width / 2, Position.Y + Height / 2);
 
             Score = 0;
         }
@@ -41,6 +44,13 @@ namespace Pong.Livings
                         Position.Y += Velocity;
                     break;
             }
+
+            UpdatePlayerEssentials();
+        }
+
+        private void UpdatePlayerEssentials()
+        {
+            PositionCentered = new Vector2(Position.X + Width / 2, Position.Y + Height / 2);
         }
     }
 }
