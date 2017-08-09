@@ -46,6 +46,7 @@
     <Compile Include="Components\SimulationComponent.cs" />
     <Compile Include="Components\SimulationHelpers\CollisionHelper.cs" />
     <Compile Include="Components\SimulationHelpers\FunMethodHelper.cs" />
+    <Compile Include="Constants\Constants.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Livings\Ball.cs" />
     <Compile Include="Livings\Player.cs" />

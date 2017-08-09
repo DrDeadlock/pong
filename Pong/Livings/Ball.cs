@@ -33,6 +33,7 @@ namespace Pong.Livings
         public void UpdateBallEssentials()
         {
             PositionCentered = new Vector2(Position.X + Width / 2, Position.Y + Height / 2);
+            Velocity = Math.Sqrt((double)(Direction.X * Direction.X + Direction.Y * Direction.Y)) * 2;
         }
     }
 }

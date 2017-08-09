@@ -16,7 +16,7 @@ namespace Pong.Livings
 
         public float Width;
         public float Height;
-        public float Velocity = 0.015f;
+        public float Velocity = 0.020f;
 
         public int Score;
 

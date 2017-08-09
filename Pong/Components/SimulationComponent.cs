@@ -14,14 +14,14 @@ namespace Pong.Components
     {
         private const float INIT_VELOCITY = 0.015f;
         private const float INIT_PLAYER_WIDTH = 0.02f;
-        private const float INIT_PLAYER_HEIGHT = 0.2f;
+        private const float INIT_PLAYER_HEIGHT = 0.16f;
         
         private Game1 Game;
 
         public Player PlayerOne;
         public Player PlayerTwo;
         public Ball Ball;
-
+        
         private Rectangle PlayerOneRect;
         private Rectangle PlayerTwoRect;
         private Rectangle BallRect;
@@ -30,13 +30,17 @@ namespace Pong.Components
         {
             this.Game = game;
             this.Game.TargetElapsedTime = TimeSpan.FromSeconds(1/60f);
-            
-            //How to initialize them exactly in the center of the battlefield?
-            PlayerOne = new Player(new Vector2(1 / 6f, 0.49f),INIT_VELOCITY,INIT_PLAYER_WIDTH,INIT_PLAYER_HEIGHT);
-            PlayerTwo = new Player(new Vector2(5 / 6f, 0.49f),INIT_VELOCITY,INIT_PLAYER_WIDTH,INIT_PLAYER_HEIGHT);
-            Ball = new Ball(new Vector2(1 / 2f, 1 / 2f), new Vector2(0.005f, 0.001f),0.016f,0.022f);
+
+            PlayerOne = new Player(new Vector2(1 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2), INIT_VELOCITY, INIT_PLAYER_WIDTH, INIT_PLAYER_HEIGHT);
+            PlayerTwo = new Player(new Vector2(5 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2),INIT_VELOCITY,INIT_PLAYER_WIDTH,INIT_PLAYER_HEIGHT);
+            //Initial way starts at half. That's why only the half of fieldLength is regarded for the first directionVector.
+            Ball = new Ball(new Vector2(1 / 2f, 1 / 2f), new Vector2(Constants.Constants.FIELDLENGTH * Constants.Constants.REACHTIME / Constants.Constants.FRAMERATE, 0.00f), 0.016f, 0.022f);
+
+            //For debugging - Ball has no obstacles
+            //Ball = new Ball(new Vector2(1 / 6f, 3 / 4f), new Vector2(0.8f * Constants.Constants.REACHTIME / Constants.Constants.FRAMERATE, 0.00f), 0.016f, 0.022f);
+
         }
-        
+
         public override void Update(GameTime gameTime)
         {
             //gameTime.ElapsedGameTime multiplizieren mit Velocity um das Spiel framerate frei zu machen.
@@ -56,7 +60,10 @@ namespace Pong.Components
                 (int)(Ball.Position.X * 100), (int)(Ball.Position.Y * 100), 
                 (int)(Ball.Height * 100), (int)(Ball.Height * 100));
 
-            //HandleAutoMovement();
+            //Call of FunMethods. AccelerateForFun is deprecated, but calling it with automove shows funny behaviour
+            //FunMethodHelper.HandleAutoMovement(PlayerOne, PlayerTwo);
+            //FunMethodHelper.AccelerateForFun(Ball);
+
 
             CollisionHelper.HandleBallWallCollision(Ball, PlayerOne, PlayerTwo);
             CollisionHelper.CheckBallPlayerCollision(Ball,PlayerOne, BallRect,PlayerOneRect);

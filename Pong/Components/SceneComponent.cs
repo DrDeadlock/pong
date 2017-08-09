@@ -22,9 +22,22 @@ namespace Pong.Components
         private int width;
         private int height;
 
+        //TODO: Find a better way to avoid those redundancies of variables
+        private double score1;
+        private double score2;
+        private int digitCount;
+        private int digitCountScore1;
+        private int digitCountScore2;
+        private float score1Relative = 0.47f;
+        private float score2Relative = 0.53f;
+
         public SceneComponent(Game1 game) : base(game)
         {
             this.Game = game;
+
+            //TODO --> change behaviour after 'restart' technology was implemented.
+            digitCountScore1 = 1;
+            digitCountScore2 = 1;
         }
 
         protected override void LoadContent()
@@ -40,9 +53,30 @@ namespace Pong.Components
             base.LoadContent();
         }
 
+        private void CheckForStringMove()
+        {
+            score1 = Game.Simulation.PlayerOne.Score;
+            digitCount = score1 > 0 ? (int)Math.Floor(Math.Log10(score1) + 1) : 1;
+
+            if (digitCount > digitCountScore1)
+            {
+                score1Relative -= 0.01f;
+                digitCountScore1++;
+            }
+
+            score2 = Game.Simulation.PlayerTwo.Score;
+            digitCount = score2 > 0 ? (int)Math.Floor(Math.Log10(score2)) : 1;
+
+            if (digitCount > digitCountScore2)
+            {
+                score2Relative += 0.01f;
+                digitCountScore2++;
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
-
+            CheckForStringMove();
 
             base.Update(gameTime);
         }
@@ -54,6 +88,7 @@ namespace Pong.Components
             width = GraphicsDevice.Viewport.Width;
             height = GraphicsDevice.Viewport.Height;
 
+            //TODO: Put several DrawBehaviours into seperate functions
             spriteBatch.Begin();
             spriteBatch.Draw(
                 PlayerOne,
@@ -70,8 +105,8 @@ namespace Pong.Components
                             (int)(Game.Simulation.Ball.Width * width),(int)(Game.Simulation.Ball.Height * height)),
                 Color.White);
 
-            spriteBatch.DrawString(schrift, Game.Simulation.PlayerOne.Score.ToString(),new Vector2(0.47f*width,0.1f*height),Color.Black );
-            spriteBatch.DrawString(schrift,Game.Simulation.PlayerTwo.Score.ToString(), new Vector2(0.53f * width, 0.1f * height),Color.Black);
+            spriteBatch.DrawString(schrift, Game.Simulation.PlayerOne.Score.ToString(),new Vector2(score1Relative*width,0.1f*height),Color.Black );
+            spriteBatch.DrawString(schrift,Game.Simulation.PlayerTwo.Score.ToString(), new Vector2(score2Relative * width, 0.1f * height),Color.Black);
 
 
             spriteBatch.End();

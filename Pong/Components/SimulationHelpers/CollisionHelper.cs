@@ -5,118 +5,104 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Pong.Livings;
+using Pong.Constants;
 
 namespace Pong.Components.SimulationHelpers
 {
     static class CollisionHelper
     {
-        //private static double CalculateBallPaddleHitRelation(Ball ball, Player player)
+        //TODO: Find out why this Constants.Constants. ... is necessary .___O
+        private const float REACHTIME = Constants.Constants.REACHTIME;
+
+        private static double CalculateRadAngle(Ball ball, Player player)
+        {
+            //Treffer mit unterer Kante liefert relation = 0.10 --> 51°
+            double relation = ball.Position.Y - player.Position.Y;
+            if (relation < 0 || relation > 0.5f)
+                return 2 * Math.PI * 80 / 360;
+            //TODO: adjust function to detect angle or change into switch-case...
+            double angleDEG = 320 * Math.Pow(relation, 2) / Math.Pow(player.Height, 2) - 320 * relation / player.Height + 80;
+            return 2 * Math.PI * angleDEG / 360;
+        }
+
+        #region First (honestly... second) try for collision.
+        //private static Vector2 CalculateUnweightResultVector(double angleRAD, Ball ball, Player player)
         //{
-        //    /*
-        //     * BallPaddleHitRelation ist definiert im Bereich 0 .. 1/2 (scaleFactor).
-        //     * Trifft der Ball den Schläger an der unteren Hälfte, wird relation > 1/2 und muss daher nachskaliert werden (if ...)
-        //     */
-        //    var relation = ball.Position.Y - player.Position.Y;
-        //    if (relation > player.Height / 2f)
-        //    {
-        //        relation -= player.Height / 2;
-        //        relation *= -1;
-        //    }
-
-        //    return relation / player.Height;
-        //}
-
-        //private static Vector2 CalculateReflectionDirection(double ballPaddleHitRelation, double ballVelocity, Ball ball)
-        //{
-        //    var angleDEG = CalculateReflectionAngle(ballPaddleHitRelation);
-        //    var angleRAD = 2 * Math.PI * angleDEG / 360;
-
-        //    var newDirX = (float)Math.Sqrt(Math.Pow(ballVelocity, 2) / (Math.Pow(Math.Tan(angleRAD), 2) + 1));
-        //    var newDirY = (float)Math.Sqrt(Math.Pow(ballVelocity, 2) - Math.Pow(ballVelocity, 2) / (Math.Pow(Math.Tan(angleRAD), 2) + 1));
+        //    var newDirX = (float)Math.Sqrt(Math.Pow(ball.Velocity, 2) / (Math.Pow(Math.Tan(angleRAD), 2) + 1));
+        //    var newDirY = (float)Math.Sqrt(Math.Pow(ball.Velocity, 2) - Math.Pow(ball.Velocity, 2) / (Math.Pow(Math.Tan(angleRAD), 2) + 1));
 
         //    if (ball.Direction.X > 0)
         //        newDirX *= -1;
-        //    if (ballPaddleHitRelation < 0)
+
+        //    if (ball.Position.Y - player.Position.Y < player.Height / 2)
         //        newDirY *= -1;
 
         //    return new Vector2(newDirX,newDirY);
         //}
 
-        //private static double CalculateReflectionAngle(double x)
+        //private static Vector2 CalculateWeightedResultVector(double reachTime,Player player, Vector2 unweightResultVector)
         //{
-        //    /*
-        //     * 80° bei Vektorlänge 1 => n = arctan (0.909 / 0.1731)
-        //     * Anstieg ergibt sich durch die zweite Tangentengleichung mit y = 0 und x = 1/2
-        //     */
-        //    return Math.Pow(-158.364f * x + 79.182f,2);
+        //    double activeFieldLength;
+        //    if (player.Position.X < 0.5f)
+        //        activeFieldLength = 1 - 2 * player.Position.X;
+        //    else
+        //        activeFieldLength = 1 - (1 - player.Position.X) * 2;
+
+        //    var einheitsVektor = unweightResultVector / unweightResultVector.Length();
+        //    var framerate = reachTime * 60;
+        //    return new Vector2((float)(einheitsVektor.X * activeFieldLength / framerate), (float)(einheitsVektor.Y * activeFieldLength / framerate));
         //}
+        #endregion
 
-        private static double calculateRADAngle(Ball ball, Player player)
+        private static Vector2 CalculateNewDirection(double angleRAD, Ball ball, Player player)
         {
-            double relation = ball.Position.Y - player.Position.Y;
-            double angleDEG = 320 * Math.Pow(relation, 2) / Math.Pow(player.Height, 2) - 320 * relation / player.Height + 80;
-            return 2 * Math.PI * angleDEG / 360;
-        }
+            var s = Constants.Constants.FIELDLENGTH / Math.Cos(angleRAD);
+            var frames = Constants.Constants.FRAMERATE * s / Constants.Constants.FIELDLENGTH;
+            var y = (float) (s * Math.Sin(angleRAD));  // frames * REACHTIME);
+            var x = (float) (Math.Sqrt(Math.Pow(s, 2) - Math.Pow(y, 2))); // frames * REACHTIME);
 
-        private static Vector2 calculateUnweightResultVector(double angleRAD, Ball ball, Player player)
-        {
-            var newDirX = (float)Math.Sqrt(Math.Pow(ball.Velocity, 2) / (Math.Pow(Math.Tan(angleRAD), 2) + 1));
-            var newDirY = (float)Math.Sqrt(Math.Pow(ball.Velocity, 2) - Math.Pow(ball.Velocity, 2) / (Math.Pow(Math.Tan(angleRAD), 2) + 1));
-
+            //Switch direction if player two hit the ball
             if (ball.Direction.X > 0)
-                newDirX *= -1;
+                x *= -1;
 
+            //upper half of paddle throws ball to the top, lower half throws to the bottom
             if (ball.Position.Y - player.Position.Y < player.Height / 2)
-                newDirY *= -1;
+                y *= -1;
 
-            return new Vector2(newDirX,newDirY);
+            return new Vector2((float)(x / (frames * REACHTIME)),(float)(y / (frames * REACHTIME)));
         }
-
-        private static Vector2 calculateWeightedResultVector(double reachTime,Player player, Vector2 unweightResultVector)
-        {
-            double activeFieldLength;
-            if (player.Position.X < 0.5f)
-                activeFieldLength = 1 - 2 * player.Position.X;
-            else
-                activeFieldLength = 1 - (1 - player.Position.X) * 2;
-
-            var einheitsVektor = unweightResultVector / unweightResultVector.Length();
-            var framerate = reachTime * 60;
-            return new Vector2((float)(einheitsVektor.X * activeFieldLength / framerate), (float)(einheitsVektor.Y * activeFieldLength / framerate));
-        }
-
-        
 
         private static void HandleBallPlayerCollision(Ball ball, Player player)
         {
-            double angleRAD = calculateRADAngle(ball, player);
-            var newV = calculateUnweightResultVector(angleRAD, ball, player);
-            ball.Direction = calculateWeightedResultVector(1, player, newV);
+            //TODO: Adjust angleDEG Detection. (Die Parabel ist zu flach)
+            var angleRAD = CalculateRadAngle(ball, player);
+            ball.Direction = CalculateNewDirection(angleRAD, ball, player);
         }
 
         public static void CheckBallPlayerCollision(Ball ball, Player player, Rectangle ballRect, Rectangle playerRectangle)
         {
-            //Sieht noch nicht besonders schön aus.
             if (playerRectangle.Intersects(ballRect))
             {
+                //Fixes ball-in-paddle-prisoned error caused by intersection method
                 if (player.Position.X < 0.5f)
                     ball.Position.X = player.Position.X + player.Width;
-                //else
-                    //ball.Position.X = player.Position.X -0.001f;
-
+                else
+                    ball.Position.X = player.Position.X - 0.015f;
+                
                 HandleBallPlayerCollision(ball,player);
             }
         }
 
         public static void HandleBallWallCollision(Ball ball, Player playerOne, Player playerTwo)
         {
+            //TODO: change reflection of side walls to start of a new round
             if (ball.Position.X < 0 || ball.Position.X > 0.98f)
             {
                 ball.Direction *= new Vector2(-1, 1);
                 if (ball.Position.X < 0)
-                    playerTwo.Score++;
+                    playerTwo.Score ++;
                 else
-                    playerOne.Score++;
+                    playerOne.Score ++;
             }
 
             if (ball.Position.Y < 0 || ball.Position.Y > 0.98f)
