@@ -23,7 +23,7 @@ namespace Pong.Components
         private int Width;
         private int Height;
 
-        //TODO: Find a better way to avoid those redundancies of variables
+        //TODO: Optimize ScoreTextAdjustement
         private double Score1;
         private double Score2;
         private int DigitCount;
@@ -109,7 +109,6 @@ namespace Pong.Components
             Width = GraphicsDevice.Viewport.Width;
             Height = GraphicsDevice.Viewport.Height;
             
-            //TODO: Put several DrawBehaviours into seperate functions
             SpriteBatch.Begin();
 
             DrawPlayers();

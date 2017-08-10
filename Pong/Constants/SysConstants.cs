@@ -15,7 +15,7 @@ namespace Pong.Constants
         //System 
 
         //How many seconds needs the ball to move from one player to the other one.
-        public const float REACHTIME = 2f;
+        public const float REACHTIME = 1.4f;
         public static readonly int FRAMERATE = 60;
     }
 }

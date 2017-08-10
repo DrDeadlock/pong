@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/julnicke/documents/visual studio 2015/Projects/Pong/Pong/Content/File.spritefont</SourceFile>
+  <SourceFile>C:/Users/julnicke/Documents/Visual Studio 2015/Projects/Pong/Pong/Content/File.spritefont</SourceFile>
   <SourceTime>2017-08-03T16:18:02.3834231+02:00</SourceTime>
-  <DestFile>C:/Users/julnicke/documents/visual studio 2015/Projects/Pong/Pong/Content/bin/Windows/File.xnb</DestFile>
-  <DestTime>2017-08-09T12:54:06.7588387+02:00</DestTime>
+  <DestFile>C:/Users/julnicke/Documents/Visual Studio 2015/Projects/Pong/Pong/Content/bin/Windows/File.xnb</DestFile>
+  <DestTime>2017-08-10T12:09:55.3924211+02:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2017-03-01T16:05:36+01:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

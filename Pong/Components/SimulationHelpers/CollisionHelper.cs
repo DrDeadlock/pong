@@ -11,7 +11,6 @@ namespace Pong.Components.SimulationHelpers
 {
     static class CollisionHelper
     {
-        //TODO: Find out why this Constants.Constants. ... is necessary .___O
         private const float REACHTIME = SysConstants.REACHTIME;
 
         private static double CalculateRadAngle(Ball ball, Player player)

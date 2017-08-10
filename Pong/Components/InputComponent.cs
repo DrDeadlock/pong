@@ -11,21 +11,21 @@ namespace Pong.Components
 {
     internal class InputComponent : GameComponent
     {
-        private readonly Game1 _game;
+        public new Game1 Game => (Game1) base.Game;
         private KeyboardState KeyState;
 
         public InputComponent(Game1 game) : base(game)
         {
-            this._game = game;
+            
         }
 
         private void MovePlayerOne(KeyboardState pKeyboardState)
         {
             if (pKeyboardState.IsKeyDown(Keys.W))
-                _game.Simulation.PlayerOne.Move(Player.MoveDirection.Up);
+                Game.Simulation.PlayerOne.Move(Player.MoveDirection.Up);
 
             if (pKeyboardState.IsKeyDown(Keys.S))
-                _game.Simulation.PlayerOne.Move(Player.MoveDirection.Down);
+                Game.Simulation.PlayerOne.Move(Player.MoveDirection.Down);
 
 
         }
@@ -33,10 +33,10 @@ namespace Pong.Components
         private void MovePlayerTwo(KeyboardState pKeyboardState)
         {
             if (pKeyboardState.IsKeyDown(Keys.Up))
-                _game.Simulation.PlayerTwo.Move(Player.MoveDirection.Up);
+                Game.Simulation.PlayerTwo.Move(Player.MoveDirection.Up);
 
             if (pKeyboardState.IsKeyDown(Keys.Down))
-                _game.Simulation.PlayerTwo.Move(Player.MoveDirection.Down);
+                Game.Simulation.PlayerTwo.Move(Player.MoveDirection.Down);
         }
 
         public override void Update(GameTime gameTime)

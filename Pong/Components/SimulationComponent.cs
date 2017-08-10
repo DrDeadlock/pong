@@ -32,7 +32,7 @@ namespace Pong.Components
             PlayerOne = new Player(new Vector2(1 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2), INIT_VELOCITY, INIT_PLAYER_WIDTH, INIT_PLAYER_HEIGHT);
             PlayerTwo = new Player(new Vector2(5 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2),INIT_VELOCITY,INIT_PLAYER_WIDTH,INIT_PLAYER_HEIGHT);
             //Initial way starts at half. That's why only the half of fieldLength is regarded for the first directionVector.
-            Ball = new Ball(new Vector2(1 / 2f, 1 / 2f), new Vector2(EntityConstants.FIELDLENGTH * SysConstants.REACHTIME / SysConstants.FRAMERATE, 0.00f), 0.016f, 0.022f);
+            Ball = new Ball(new Vector2(1 / 2f, 1 / 2f), new Vector2(EntityConstants.FIELDLENGTH / (SysConstants.REACHTIME * SysConstants.FRAMERATE), 0.00f), 0.016f, 0.022f);
 
             //For debugging - Ball has no obstacles
             //Ball = new Ball(new Vector2(1 / 6f, 3 / 4f), new Vector2(0.8f * Constants.Constants.REACHTIME / Constants.Constants.FRAMERATE, 0.00f), 0.016f, 0.022f);
