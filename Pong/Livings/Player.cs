@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Pong.Constants;
 
 namespace Pong.Livings
 {
@@ -16,7 +17,7 @@ namespace Pong.Livings
 
         public float Width;
         public float Height;
-        public float Velocity = 0.020f;
+        public float Velocity;
 
         public int Score;
 

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Components\InputComponent.cs" />
     <Compile Include="Components\SceneComponent.cs" />
+    <Compile Include="Components\SceneHelpers\BallExplosionAnimationHelper.cs" />
     <Compile Include="Components\SimulationComponent.cs" />
     <Compile Include="Components\SimulationHelpers\CollisionHelper.cs" />
     <Compile Include="Components\SimulationHelpers\FunMethodHelper.cs" />

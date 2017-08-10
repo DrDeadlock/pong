@@ -11,17 +11,19 @@ namespace Pong.Components.SimulationHelpers
 {
     static class CollisionHelper
     {
-        private const float REACHTIME = SysConstants.REACHTIME;
+        private const float REACHTIME = SysConstants.BALLREACHTIME;
+        private const double π = Math.PI;
+
 
         private static double CalculateRadAngle(Ball ball, Player player)
         {
             //Treffer mit unterer Kante liefert relation = 0.10 --> 51°
             double relation = ball.Position.Y - player.Position.Y;
             if (relation < 0 || relation > 0.5f)
-                return 2 * Math.PI * 80 / 360;
+                return 2 * π * 75 / 360;
             //TODO: adjust function to detect angle or change into switch-case...
-            double angleDEG = 320 * Math.Pow(relation, 2) / Math.Pow(player.Height, 2) - 320 * relation / player.Height + 80;
-            return 2 * Math.PI * angleDEG / 360;
+            double α = 320 * Math.Pow(relation, 2) / Math.Pow(player.Height, 2) - 320 * relation / player.Height + 80;
+            return 2 * π * α / 360;
         }
 
         #region First (honestly... second) try for collision.
@@ -52,7 +54,7 @@ namespace Pong.Components.SimulationHelpers
         //    return new Vector2((float)(einheitsVektor.X * activeFieldLength / framerate), (float)(einheitsVektor.Y * activeFieldLength / framerate));
         //}
         #endregion
-
+        
         private static Vector2 CalculateNewDirection(double angleRAD, Ball ball, Player player)
         {
             var s = EntityConstants.FIELDLENGTH / Math.Cos(angleRAD);
@@ -70,12 +72,12 @@ namespace Pong.Components.SimulationHelpers
 
             return new Vector2((float)(x / (frames * REACHTIME)),(float)(y / (frames * REACHTIME)));
         }
-
+        
         private static void HandleBallPlayerCollision(Ball ball, Player player)
         {
             //TODO: Adjust angleDEG Detection. (Die Parabel ist zu flach)
-            var angleRAD = CalculateRadAngle(ball, player);
-            ball.Direction = CalculateNewDirection(angleRAD, ball, player);
+            var φ = CalculateRadAngle(ball, player);
+            ball.Direction = CalculateNewDirection(φ, ball, player);
         }
 
         public static void CheckBallPlayerCollision(Ball ball, Player player, Rectangle ballRect, Rectangle playerRectangle)
@@ -92,7 +94,7 @@ namespace Pong.Components.SimulationHelpers
             }
         }
 
-        public static void HandleBallWallCollision(Ball ball, Player playerOne, Player playerTwo)
+        public static bool HandleBallWallCollision(Ball ball, Player playerOne, Player playerTwo)
         {
             //TODO: change reflection of side walls to start of a new round
             if (ball.Position.X < 0 || ball.Position.X > 0.98f)
@@ -102,10 +104,15 @@ namespace Pong.Components.SimulationHelpers
                     playerTwo.Score ++;
                 else
                     playerOne.Score ++;
+                //Explosion has to be activated
+                return true;
             }
 
             if (ball.Position.Y < 0 || ball.Position.Y > 0.98f)
                 ball.Direction *= new Vector2(1, -1);
+
+            //Explosion has NOT to be activated
+            return false;
         }
 
         public static void HandlePlayerWallCollision(Player playerOne, Player playerTwo)

@@ -13,7 +13,9 @@ namespace Pong.Components
 {
     internal class SimulationComponent : GameComponent
     {
-        private const float INIT_VELOCITY = 0.015f;
+        private new Game1 Game => (Game1) base.Game;
+
+        private const float INIT_VELOCITY = SysConstants.PLAYERVELOCITY;
         private const float INIT_PLAYER_WIDTH = 0.02f;
         private const float INIT_PLAYER_HEIGHT = 0.16f;
         
@@ -32,10 +34,10 @@ namespace Pong.Components
             PlayerOne = new Player(new Vector2(1 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2), INIT_VELOCITY, INIT_PLAYER_WIDTH, INIT_PLAYER_HEIGHT);
             PlayerTwo = new Player(new Vector2(5 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2),INIT_VELOCITY,INIT_PLAYER_WIDTH,INIT_PLAYER_HEIGHT);
             //Initial way starts at half. That's why only the half of fieldLength is regarded for the first directionVector.
-            Ball = new Ball(new Vector2(1 / 2f, 1 / 2f), new Vector2(EntityConstants.FIELDLENGTH / (SysConstants.REACHTIME * SysConstants.FRAMERATE), 0.00f), 0.016f, 0.022f);
+            //Ball = new Ball(new Vector2(1 / 2f, 1 / 2f), new Vector2(EntityConstants.FIELDLENGTH / (SysConstants.BALLREACHTIME * SysConstants.FRAMERATE), 0.00f), 0.016f, 0.022f);
 
             //For debugging - Ball has no obstacles
-            //Ball = new Ball(new Vector2(1 / 6f, 3 / 4f), new Vector2(0.8f * Constants.Constants.REACHTIME / Constants.Constants.FRAMERATE, 0.00f), 0.016f, 0.022f);
+            Ball = new Ball(new Vector2(1 / 6f, 3 / 4f), new Vector2(EntityConstants.FIELDLENGTH / (SysConstants.BALLREACHTIME * SysConstants.FRAMERATE), 0.00f), 0.016f, 0.022f);
 
         }
 
@@ -63,8 +65,14 @@ namespace Pong.Components
             //FunMethodHelper.AccelerateForFun(Ball);
 
 
-            CollisionHelper.HandleBallWallCollision(Ball, PlayerOne, PlayerTwo);
             CollisionHelper.CheckBallPlayerCollision(Ball,PlayerOne, BallRect,PlayerOneRect);
+            if (CollisionHelper.HandleBallWallCollision(Ball, PlayerOne, PlayerTwo))
+            {
+                //TODO Move explosion behaviour to respectable position in code...
+                Game.Scene.ExplosionActivated = true;
+                Ball.Direction = Vector2.Zero;
+                
+            }
             CollisionHelper.CheckBallPlayerCollision(Ball,PlayerTwo, BallRect,PlayerTwoRect);
             CollisionHelper.HandlePlayerWallCollision(PlayerOne,PlayerTwo);
 
