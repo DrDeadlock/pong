@@ -12,7 +12,7 @@ namespace Pong.Components.SimulationHelpers
     static class CollisionHelper
     {
         //TODO: Find out why this Constants.Constants. ... is necessary .___O
-        private const float REACHTIME = Constants.Constants.REACHTIME;
+        private const float REACHTIME = SysConstants.REACHTIME;
 
         private static double CalculateRadAngle(Ball ball, Player player)
         {
@@ -56,8 +56,8 @@ namespace Pong.Components.SimulationHelpers
 
         private static Vector2 CalculateNewDirection(double angleRAD, Ball ball, Player player)
         {
-            var s = Constants.Constants.FIELDLENGTH / Math.Cos(angleRAD);
-            var frames = Constants.Constants.FRAMERATE * s / Constants.Constants.FIELDLENGTH;
+            var s = EntityConstants.FIELDLENGTH / Math.Cos(angleRAD);
+            var frames = SysConstants.FRAMERATE * s / EntityConstants.FIELDLENGTH;
             var y = (float) (s * Math.Sin(angleRAD));  // frames * REACHTIME);
             var x = (float) (Math.Sqrt(Math.Pow(s, 2) - Math.Pow(y, 2))); // frames * REACHTIME);
 

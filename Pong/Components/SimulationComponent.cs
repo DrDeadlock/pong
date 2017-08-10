@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Pong.Components.SimulationHelpers;
+using Pong.Constants;
 using Pong.Livings;
 
 namespace Pong.Components
@@ -16,25 +17,22 @@ namespace Pong.Components
         private const float INIT_PLAYER_WIDTH = 0.02f;
         private const float INIT_PLAYER_HEIGHT = 0.16f;
         
-        private Game1 Game;
-
-        public Player PlayerOne;
-        public Player PlayerTwo;
-        public Ball Ball;
+        public Player PlayerOne { get; set; }
+        public Player PlayerTwo { get; set; }
+        public Ball Ball { get; set; }
         
-        private Rectangle PlayerOneRect;
-        private Rectangle PlayerTwoRect;
-        private Rectangle BallRect;
+        private Rectangle PlayerOneRect { get; set; }
+        private Rectangle PlayerTwoRect { get; set; }
+        private Rectangle BallRect { get; set; }
 
         public SimulationComponent(Game1 game) : base(game)
         {
-            this.Game = game;
             this.Game.TargetElapsedTime = TimeSpan.FromSeconds(1/60f);
 
             PlayerOne = new Player(new Vector2(1 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2), INIT_VELOCITY, INIT_PLAYER_WIDTH, INIT_PLAYER_HEIGHT);
             PlayerTwo = new Player(new Vector2(5 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2),INIT_VELOCITY,INIT_PLAYER_WIDTH,INIT_PLAYER_HEIGHT);
             //Initial way starts at half. That's why only the half of fieldLength is regarded for the first directionVector.
-            Ball = new Ball(new Vector2(1 / 2f, 1 / 2f), new Vector2(Constants.Constants.FIELDLENGTH * Constants.Constants.REACHTIME / Constants.Constants.FRAMERATE, 0.00f), 0.016f, 0.022f);
+            Ball = new Ball(new Vector2(1 / 2f, 1 / 2f), new Vector2(EntityConstants.FIELDLENGTH * SysConstants.REACHTIME / SysConstants.FRAMERATE, 0.00f), 0.016f, 0.022f);
 
             //For debugging - Ball has no obstacles
             //Ball = new Ball(new Vector2(1 / 6f, 3 / 4f), new Vector2(0.8f * Constants.Constants.REACHTIME / Constants.Constants.FRAMERATE, 0.00f), 0.016f, 0.022f);
