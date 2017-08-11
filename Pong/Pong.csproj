@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Components\InputComponent.cs" />
     <Compile Include="Components\SceneComponent.cs" />
-    <Compile Include="Components\SceneHelpers\BallExplosionAnimationHelper.cs" />
     <Compile Include="Components\SimulationComponent.cs" />
     <Compile Include="Components\SimulationHelpers\CollisionHelper.cs" />
     <Compile Include="Components\SimulationHelpers\FunMethodHelper.cs" />
@@ -52,8 +51,11 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Livings\Ball.cs" />
     <Compile Include="Livings\Player.cs" />
+    <Compile Include="Managers\AnimationManager.cs" />
+    <Compile Include="Models\Animation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sprites\Sprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -63,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\BallExplosion.png" />
     <Content Include="Content\Pixel1x1.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
@@ -70,7 +73,9 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Components\SceneHelpers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

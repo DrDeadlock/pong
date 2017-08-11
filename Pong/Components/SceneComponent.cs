@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Pong.Components.SceneHelpers;
+using Pong.Livings;
+using Pong.Models;
+using Pong.Sprites;
 
 namespace Pong.Components
 {
@@ -19,7 +21,6 @@ namespace Pong.Components
         private Texture2D PlayerOne;
         private Texture2D PlayerTwo;
         private Texture2D Ball;
-        private Texture2D BallExplodedTile;
 
         private SpriteFont Schrift;
 
@@ -35,10 +36,13 @@ namespace Pong.Components
         private float Score1Relative = 0.47f;
         private float Score2Relative = 0.53f;
 
-        private int ExplosionTimeStep;
-        private List<Vector2> ExplosionPoints;
-
         public bool ExplosionActivated { get; set; }
+        private double Timer;
+        private bool IsRunningTimer;
+        private bool StopBallDraw = false;
+
+        private Dictionary<string, Animation> Animations;
+        private List<Sprite> Sprites;
 
         public SceneComponent(Game1 game) : base(game)
         {
@@ -47,16 +51,27 @@ namespace Pong.Components
             DigitCountScore2 = 1;
 
             ExplosionActivated = false;
-            ExplosionTimeStep = -1;
+            Timer = 0;
         }
 
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            PlayerOne = PlayerTwo = Ball = BallExplodedTile = Game.Content.Load<Texture2D>("Pixel1x1");
+            PlayerOne = PlayerTwo = Ball = Game.Content.Load<Texture2D>("Pixel1x1");
 
             Schrift = Game.Content.Load<SpriteFont>("File");
+
+            Animations = new Dictionary<string, Animation>()
+            {
+                  
+            };
+
+            Sprites = new List<Sprite>()
+            {
+                
+            };
+            
 
             base.LoadContent();
         }
@@ -82,9 +97,54 @@ namespace Pong.Components
             }
         }
 
+        private void StartTimer()
+        {
+            IsRunningTimer = true;
+        }
+
+        private void StopTimer()
+        {
+            Timer = 0;
+            IsRunningTimer = false;
+        }
+
+        private void UpdateTimer(GameTime gameTime)
+        {
+            Timer += gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
         public override void Update(GameTime gameTime)
         {
             CheckForStringMove();
+
+            if (ExplosionActivated)
+            {
+                ExplosionActivated = false;
+                StartTimer();
+                Animations.Add("BallExplosion", new Animation(Game.Content.Load<Texture2D>("BallExplosion"), 3));
+                Sprites.Add(new Sprite(Animations)
+                {
+                    Position = new Vector2(
+                       (Game.Simulation.Ball.Position.X - 2*Game.Simulation.Ball.Width) * Width,
+                        (Game.Simulation.Ball.Position.Y - 2*Game.Simulation.Ball.Height) * Height
+                    )
+                });
+            }
+            if (IsRunningTimer)
+                UpdateTimer(gameTime);
+
+            if (Timer >= 0.9f)
+            {
+                Animations.Remove("BallExplosion");
+                Sprites.Remove(Sprites.First());
+                StopTimer();
+                StopBallDraw = true;
+            }
+
+            foreach (var sprite in Sprites)
+            {
+                sprite.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -101,7 +161,7 @@ namespace Pong.Components
                 new Rectangle((int)(Game.Simulation.PlayerTwo.Position.X * Width), (int)(Game.Simulation.PlayerTwo.Position.Y * Height),
                     (int)(Game.Simulation.PlayerTwo.Width * Width), (int)(Game.Simulation.PlayerTwo.Height * Height)),
                 Color.White);
-            if (!ExplosionActivated)
+            if (!ExplosionActivated && !StopBallDraw)
                 SpriteBatch.Draw(Ball,
                     new Rectangle((int)(Game.Simulation.Ball.Position.X * Width), (int)(Game.Simulation.Ball.Position.Y * Height),
                         (int)(Game.Simulation.Ball.Width * Width), (int)(Game.Simulation.Ball.Height * Height)),
@@ -115,49 +175,6 @@ namespace Pong.Components
         }
 
         //TODO correct the mathematics of the function!
-        private void DrawBallExplosion(GameTime gameTime)
-        {
-            int frame = (int) (gameTime.TotalGameTime.TotalMilliseconds / 500);
-            var timeStep = frame % 4;
-            if (ExplosionTimeStep < timeStep && timeStep < 5)
-            {
-                ExplosionTimeStep = timeStep;
-                ExplosionPoints = BallExplosionAnimationHelper.GetRandomExplosionPositions(ExplosionTimeStep);
-                
-            }
-
-            if (timeStep < 5)
-            {
-                if (Game.Simulation.Ball.Direction.X < 0)
-                    foreach (var point in ExplosionPoints)
-                    {
-                        SpriteBatch.Draw(BallExplodedTile,
-                            new Rectangle((int)(Game.Simulation.Ball.Position.X + (Width * point.X) / ((timeStep+1)*BallExplosionAnimationHelper.ScaleFactor)),
-                                (int)(Game.Simulation.Ball.Position.Y + (Height * point.Y) / ((timeStep + 1) * BallExplosionAnimationHelper.ScaleFactor)),
-                                4, 4)
-                            , Color.White);
-                    }
-                else// /((timeStep + 1) * BallExplosionAnimationHelper.ScaleFactor))
-                    foreach (var point in ExplosionPoints)
-                    {
-                        var rect = new Rectangle(
-                            (int)((Game.Simulation.Ball.Position.X + (Game.Simulation.Ball.Width * point.X) * Width-50)),
-                            (int)((Game.Simulation.Ball.Position.Y + (Game.Simulation.Ball.Height * point.Y) 
-                                    * Height-50)),
-                            4, 4);
-                        SpriteBatch.Draw(BallExplodedTile,rect, Color.White);
-                    }
-            }
-
-            if (ExplosionTimeStep == 4)
-            {
-                ExplosionTimeStep = 0;
-                ExplosionActivated = false;
-                Game.Simulation.Ball.Position = new Vector2(1 / 2f, 1 / 2f);
-            }
-
-        }
-
         public override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.ForestGreen);
@@ -171,9 +188,9 @@ namespace Pong.Components
             DrawScores();
 
             //TODO: [Anm002] implement reaction to BallWallCollision
-            if (ExplosionActivated)
+            foreach (var sprite in Sprites)
             {
-                DrawBallExplosion(gameTime);
+                sprite.Draw(SpriteBatch);
             }
 
             SpriteBatch.End();

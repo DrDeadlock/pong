@@ -23,3 +23,4 @@ c:\users\julnicke\documents\visual studio 2015\Projects\Pong\Pong\obj\x86\Debug\
 c:\users\julnicke\documents\visual studio 2015\Projects\Pong\Pong\bin\Windows\x86\Debug\Content\Pixel1x1.xnb
 c:\users\julnicke\documents\visual studio 2015\Projects\Pong\Pong\obj\x86\Debug\Pong.csprojResolveAssemblyReference.cache
 C:\Users\julnicke\Documents\Visual Studio 2015\Projects\Pong\Pong\bin\Windows\x86\Debug\Content\File.xnb
+C:\Users\julnicke\Documents\Visual Studio 2015\Projects\Pong\Pong\bin\Windows\x86\Debug\Content\BallExplosion.xnb

@@ -29,17 +29,23 @@ namespace Pong.Components
 
         public SimulationComponent(Game1 game) : base(game)
         {
-            this.Game.TargetElapsedTime = TimeSpan.FromSeconds(1/60f);
+            this.Game.TargetElapsedTime = TimeSpan.FromSeconds(1 / 60f);
 
-            PlayerOne = new Player(new Vector2(1 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2), INIT_VELOCITY, INIT_PLAYER_WIDTH, INIT_PLAYER_HEIGHT);
-            PlayerTwo = new Player(new Vector2(5 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2),INIT_VELOCITY,INIT_PLAYER_WIDTH,INIT_PLAYER_HEIGHT);
+            PlayerOne = new Player(new Vector2(1 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2), INIT_VELOCITY, INIT_PLAYER_WIDTH,
+                INIT_PLAYER_HEIGHT);
+            PlayerTwo = new Player(new Vector2(5 / 6f, 0.5f - INIT_PLAYER_HEIGHT / 2), INIT_VELOCITY, INIT_PLAYER_WIDTH,
+                INIT_PLAYER_HEIGHT);
             //Initial way starts at half. That's why only the half of fieldLength is regarded for the first directionVector.
             //Ball = new Ball(new Vector2(1 / 2f, 1 / 2f), new Vector2(EntityConstants.FIELDLENGTH / (SysConstants.BALLREACHTIME * SysConstants.FRAMERATE), 0.00f), 0.016f, 0.022f);
 
             //For debugging - Ball has no obstacles
-            Ball = new Ball(new Vector2(1 / 6f, 3 / 4f), new Vector2(EntityConstants.FIELDLENGTH / (SysConstants.BALLREACHTIME * SysConstants.FRAMERATE), 0.00f), 0.016f, 0.022f);
+            Ball = new Ball(new Vector2(1 / 6f, 3 / 4f),
+                new Vector2(EntityConstants.FIELDLENGTH / (SysConstants.BALLREACHTIME * SysConstants.FRAMERATE), 0.00f),
+                0.016f, 0.022f);
 
         }
+
+        private bool StopRound = false;
 
         public override void Update(GameTime gameTime)
         {
@@ -64,14 +70,17 @@ namespace Pong.Components
             //FunMethodHelper.HandleAutoMovement(PlayerOne, PlayerTwo);
             //FunMethodHelper.AccelerateForFun(Ball);
 
-
-            CollisionHelper.CheckBallPlayerCollision(Ball,PlayerOne, BallRect,PlayerOneRect);
-            if (CollisionHelper.HandleBallWallCollision(Ball, PlayerOne, PlayerTwo))
+            if (!StopRound)
             {
-                //TODO Move explosion behaviour to respectable position in code...
-                Game.Scene.ExplosionActivated = true;
-                Ball.Direction = Vector2.Zero;
-                
+                CollisionHelper.CheckBallPlayerCollision(Ball, PlayerOne, BallRect, PlayerOneRect);
+                if (CollisionHelper.HandleBallWallCollision(Ball, PlayerOne, PlayerTwo))
+                {
+                    //    //TODO Move explosion behaviour to respectable position in code...
+                    Game.Scene.ExplosionActivated = true;
+                    Ball.Direction = Vector2.Zero;
+                    StopRound = true;
+
+                }
             }
             CollisionHelper.CheckBallPlayerCollision(Ball,PlayerTwo, BallRect,PlayerTwoRect);
             CollisionHelper.HandlePlayerWallCollision(PlayerOne,PlayerTwo);
